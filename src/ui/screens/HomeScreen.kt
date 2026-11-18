@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ScreenShare
 import androidx.compose.material.icons.filled.Monitor
 import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.runtime.Composable
@@ -68,6 +69,14 @@ fun HomeScreen(
                 modifier = Modifier.weight(1f)
             )
         }
+
+        // Riga 2.5: Access (tessera orizzontale)
+        CardTile(
+            title = "Access",
+            icon = Icons.Filled.Storage,
+            onClick = { onNavigate(Route.Access.path) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         // Riga 3: Terminal (tessera orizzontale a tutta larghezza)
         CardTile(

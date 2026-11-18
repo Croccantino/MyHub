@@ -50,6 +50,7 @@ import com.myhub.app.ui.biometrics.BiometricHelper
 import com.myhub.app.ui.components.AppDrawerContent
 import com.myhub.app.ui.components.BottomBar
 import com.myhub.app.ui.navigation.Route
+import com.myhub.app.ui.screens.AccessScreen
 import com.myhub.app.ui.screens.DatiScreen
 import com.myhub.app.ui.screens.DesktopStateScreen
 import com.myhub.app.ui.screens.HomeScreen
@@ -229,7 +230,7 @@ private fun MainApp() {
                 topBar = {
                     // La schermata "Access" ha una sua intestazione con logo,
                     // titolo e timer: quella globale resta nascosta.
-                    if (currentRoute != Route.Dati.path && currentRoute != Route.Desktop.path) {
+                    if (currentRoute != Route.Dati.path && currentRoute != Route.Desktop.path && currentRoute != Route.Access.path) {
                         TopAppBar(
                             title = { Text("MyHub") },
                             navigationIcon = {
@@ -258,6 +259,16 @@ private fun MainApp() {
                         }
                         composable(Route.Dati.path) {
                             DatiScreen(
+                                onOpenDrawer = { scope.launch { drawerState.open() } },
+                                onVaiPreferenze = {
+                                    navController.navigate(Route.Preferenze.path) {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
+                        }
+                        composable(Route.Access.path) {
+                            AccessScreen(
                                 onOpenDrawer = { scope.launch { drawerState.open() } },
                                 onVaiPreferenze = {
                                     navController.navigate(Route.Preferenze.path) {
