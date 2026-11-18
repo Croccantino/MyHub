@@ -79,6 +79,7 @@
 
     <!-- Dati / Access -->
     <string name="menu">Menu</string>
+    <string name="dati_titolo">Dati</string>
     <string name="dati_lettura">Lettura</string>
     <string name="dati_scrittura">Scrittura</string>
     <string name="dati_disco_titolo">Disco</string>

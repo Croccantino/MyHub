@@ -8,31 +8,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,14 +43,11 @@ import com.myhub.app.R
 import com.myhub.app.data.model.DiscoInfo
 import com.myhub.app.data.repository.AgenteDatiRepository
 import com.myhub.app.data.repository.DesktopRepository
-import com.myhub.app.ui.components.dati.GraficoTempo
-import com.myhub.app.ui.components.dati.IntestazioneAccess
-import com.myhub.app.ui.components.dati.ScrollbarVerticale
 
 /**
  * Schermata "Dati" — disco del PC.
  *
- * Mostra l'uso delle partizioni disco e i grafici I/O.
+ * Mostra solo le partizioni disco. Nessun legame con Access.
  */
 @Composable
 fun DatiScreen(
@@ -76,10 +71,26 @@ fun DatiScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        IntestazioneAccess(
-            uptimeSecondiIniziale = stato.uptimeSecondi,
-            onOpenDrawer = onOpenDrawer
-        )
+        // Intestazione semplice con logo e titolo
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material3.IconButton(onClick = onOpenDrawer) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.myhub.app.R.drawable.logo),
+                    contentDescription = stringResource(R.string.menu),
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+            Text(
+                text = stringResource(R.string.dati_titolo),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -153,7 +164,6 @@ private fun MessaggioErrore(errore: ErroreDati?, onRiprova: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ContenutoDati(
     stato: DatiUiState,
@@ -178,35 +188,6 @@ private fun ContenutoDati(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Grafici I/O
-                item {
-                    GraficoTempo(
-                        titolo = stringResource(R.string.dati_lettura),
-                        punti = stato.campioniIo,
-                        selettore = { it.letturaMbS },
-                        colore = MaterialTheme.colorScheme.primary,
-                        nonDisponibile = stato.ioNonDisponibile
-                    )
-                }
-                item {
-                    GraficoTempo(
-                        titolo = stringResource(R.string.dati_scrittura),
-                        punti = stato.campioniIo,
-                        selettore = { it.scritturaMbS },
-                        colore = MaterialTheme.colorScheme.tertiary,
-                        nonDisponibile = stato.ioNonDisponibile
-                    )
-                }
-
-                // Sezione Disco
-                item {
-                    Text(
-                        text = stringResource(R.string.dati_disco_titolo),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
                 if (stato.dischi.isEmpty()) {
                     item {
                         Text(
@@ -221,13 +202,19 @@ private fun ContenutoDati(
                         RigaDisco(disco = disco)
                     }
                 }
+
+                if (stato.errore != null) {
+                    item {
+                        Text(
+                            text = stringResource(messaggioErrore(stato.errore)),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
             }
         }
-
-        ScrollbarVerticale(
-            listState = listState,
-            modifier = Modifier.align(Alignment.CenterStart)
-        )
     }
 }
 
