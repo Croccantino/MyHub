@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    L'agente MyHub parla HTTP in chiaro: il traffico viaggia dentro il tunnel
+    Tailscale. Il cleartext resta disattivato ovunque tranne che per i nomi
+    MagicDNS (*.ts.net) e per l'IP Tailscale del PC configurato nell'app.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">ts.net</domain>
+        <domain>100.111.246.64</domain>
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,33 @@
+﻿# Build
+build/
+*.apk
+*.aab
+
+# Gradle
+.gradle/
+gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Keystore
+*.jks
+*.keystore
+
+# Server
+server/agente/.venv/
+server/agente/__pycache__/
+server/agente/.pytest_cache/
+server/agente/uvicorn.log
+server/agente/uvicorn_err.log
+server/agente/stderr.log
+
+# Temp
+*.tmp
+*.log

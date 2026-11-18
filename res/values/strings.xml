@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyHub</string>
+    <string name="home">Home</string>
+    <string name="reload">Ricarica</string>
+    <string name="help">Aiuto</string>
+    <string name="connection">Connessione</string>
+    <string name="retry">Riprova</string>
+    <string name="pc_offline">PC offline</string>
+    <string name="loading">Caricamento…</string>
+    <string name="dati">Dati</string>
+    <string name="insegne">Access</string>
+    <string name="desktop_state">Desktop state</string>
+    <string name="remote_control">Remote control</string>
+    <string name="dispositivi_collegati">Dispositivi collegati</string>
+    <string name="terminal">Terminal</string>
+    <string name="preferenze">Preferenze</string>
+    <string name="impostazioni">Impostazioni</string>
+    <string name="in_costruzione">in costruzione</string>
+
+    <!-- Impostazioni -->
+    <string name="sezione_aspetto">Aspetto e Lingua</string>
+    <string name="tema">Tema</string>
+    <string name="tema_sistema">Segui il sistema</string>
+    <string name="tema_chiaro">Chiaro</string>
+    <string name="tema_scuro">Scuro</string>
+    <string name="lingua">Lingua</string>
+    <string name="lingua_italiano">Italiano</string>
+    <string name="lingua_inglese">English</string>
+
+    <string name="sezione_sicurezza">Sicurezza e Notifiche</string>
+    <string name="notifiche">Notifiche</string>
+    <string name="notifiche_desc">Ricevi avvisi e aggiornamenti dall\'app</string>
+    <string name="soglia_accessi">Soglia avvisi accessi</string>
+    <string name="soglia_accessi_desc">Avviso dopo %1$d accessi falliti consecutivi</string>
+    <string name="impronta">Blocco con impronta digitale</string>
+    <string name="impronta_desc">Richiedi impronta all\'avvio dell\'app</string>
+
+    <string name="sezione_info">Informazioni</string>
+    <string name="info_versione">Versione app</string>
+
+    <string name="annulla">Annulla</string>
+    <string name="chiudi">Chiudi</string>
+    <string name="biometric_prompt_title">Autenticazione biometrica</string>
+    <string name="biometric_prompt_subtitle">Tocca il sensore per sbloccare MyHub</string>
+    <string name="biometric_non_disponibile">Sensore impronta non configurato o non disponibile</string>
+    <string name="biometric_impronta_non_riconosciuta">Impronta non riconosciuta</string>
+    <string name="app_bloccata">MyHub è bloccato</string>
+    <string name="sblocca">Sblocca</string>
+    <string name="access">Access</string>
+    <string name="drawer_access">Access</string>
+
+    <!-- Preferenze -->
+    <string name="pref_title">Preferenze</string>
+    <string name="pref_add_desktop">+ Aggiungi un nuovo desktop</string>
+    <string name="pref_empty">Nessun desktop configurato.\nTocca il pulsante qui sotto per aggiungerne uno.</string>
+    <string name="pref_nome">Nome</string>
+    <string name="pref_host">Indirizzo (host o IP)</string>
+    <string name="pref_porta">Porta</string>
+    <string name="pref_token">Token API</string>
+    <string name="pref_servizio_rdp">Desktop remoto</string>
+    <string name="pref_servizio_ssh">SSH</string>
+    <string name="pref_servizio_db">Database</string>
+    <string name="pref_test_connessione">Testa connessione</string>
+    <string name="pref_elimina">Elimina</string>
+    <string name="pref_elimina_conferma">Vuoi davvero eliminare questo desktop?</string>
+    <string name="pref_conferma">Conferma</string>
+    <string name="pref_modifica">Modifica desktop</string>
+    <string name="pref_nuovo">Nuovo desktop</string>
+    <string name="pref_salva">Salva</string>
+    <string name="pref_health_ok">Server raggiungibile, database OK</string>
+    <string name="pref_health_ok_no_db">Server raggiungibile, database non raggiungibile</string>
+    <string name="pref_health_token_invalid">Token non valido (401)</string>
+    <string name="pref_health_unreachable">Server non raggiungibile</string>
+    <string name="pref_health_testing">Test in corso…</string>
+    <string name="stato_controllo">controllo in corso</string>
+    <string name="stato_connesso">connesso</string>
+    <string name="stato_non_raggiungibile">non raggiungibile</string>
+
+    <!-- Dati / Access -->
+    <string name="menu">Menu</string>
+    <string name="dati_lettura">Lettura</string>
+    <string name="dati_scrittura">Scrittura</string>
+    <string name="dati_disco_titolo">Disco</string>
+    <string name="dati_disco_non_disponibile">Informazioni disco non disponibili</string>
+    <string name="dati_disco_poco_spazio">Spazio libero insufficiente (meno del 10%)</string>
+    <string name="dati_mb_s">MB/s</string>
+    <string name="dati_accessi_titolo">Accessi al PC</string>
+    <string name="dati_esito_ok">ok</string>
+    <string name="dati_esito_fallito">fallito</string>
+    <string name="dati_non_disponibile">non disponibile</string>
+    <string name="dati_nessun_accesso">Nessun accesso registrato.</string>
+    <string name="dati_nessun_server">Nessun server attivo.\nConfigura un desktop nelle Preferenze per vedere i dati.</string>
+    <string name="dati_vai_preferenze">Vai a Preferenze</string>
+    <string name="dati_errore_token">Token non valido. Controlla il token nelle Preferenze.</string>
+    <string name="dati_errore_rete">Server non raggiungibile. Controlla la connessione.</string>
+    <string name="dati_errore_generico">Impossibile caricare i dati.</string>
+    <string name="dati_io_non_disponibile">Dati I/O non disponibili.</string>
+    <string name="dati_fine_lista">Non ci sono altri accessi.</string>
+    <string name="dati_dettaglio_titolo">Dettaglio accesso</string>
+    <string name="dati_ip">IP</string>
+    <string name="dati_data">Data</string>
+    <string name="dati_ora">Ora</string>
+    <string name="dati_metodo">Metodo</string>
+    <string name="dati_utente">Utente</string>
+    <string name="dati_esito">Esito</string>
+    <string name="dati_posizione">Posizione stimata</string>
+    <string name="dati_tracciamento">Tracciamento</string>
+    <string name="dati_cosa_ha_fatto">Cosa ha fatto</string>
+</resources>
