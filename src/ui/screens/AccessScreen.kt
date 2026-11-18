@@ -50,9 +50,9 @@ import com.myhub.app.ui.components.dati.IntestazioneAccess
 import com.myhub.app.ui.components.dati.ScrollbarVerticale
 
 /**
- * Schermata "Dati" GÇö disco del PC.
+ * Schermata "Access" - accessi e statistica del PC.
  *
- * Mostra l'uso delle partizioni disco e i grafici I/O.
+ * Mostra grafici I/O, lista accessi e uptime del sistema.
  */
 @Composable
 fun AccessScreen(
@@ -197,30 +197,6 @@ private fun ContenutoDati(
                         nonDisponibile = stato.ioNonDisponibile
                     )
                 }
-
-                // Sezione Disco
-                item {
-                    Text(
-                        text = stringResource(R.string.dati_disco_titolo),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                if (stato.dischi.isEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.dati_disco_non_disponibile),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 16.dp)
-                        )
-                    }
-                } else {
-                    items(stato.dischi) { disco ->
-                        RigaDisco(disco = disco)
-                    }
-                }
             }
         }
 
@@ -228,90 +204,6 @@ private fun ContenutoDati(
             listState = listState,
             modifier = Modifier.align(Alignment.CenterStart)
         )
-    }
-}
-
-@Composable
-private fun RigaDisco(disco: DiscoInfo, modifier: Modifier = Modifier) {
-    val coloreBarra = when {
-        disco.percentuale < 70.0 -> MaterialTheme.colorScheme.primary
-        disco.percentuale < 90.0 -> Color(0xFFF9A825)
-        else -> MaterialTheme.colorScheme.error
-    }
-
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Filled.Album,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = disco.dispositivo,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                        Text(
-                            text = disco.filesystem,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-                Text(
-                    text = "${disco.percentuale.toInt()}%",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = coloreBarra
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LinearProgressIndicator(
-                progress = { (disco.percentuale / 100.0).toFloat() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = coloreBarra,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Usato: ${String.format("%.1f", disco.usatoGb)} GB / ${String.format("%.1f", disco.totaleGb)} GB",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "Libero: ${String.format("%.1f", disco.liberoGb)} GB",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            if (disco.liberoGb < disco.totaleGb * 0.1) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.dati_disco_poco_spazio),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-        }
     }
 }
 
