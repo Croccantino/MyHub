@@ -3,7 +3,17 @@ package com.myhub.app.data
 import com.myhub.app.model.Accesso
 import com.myhub.app.model.Server
 
+data class HomeCardInfo(val titolo: String, val sottotitolo: String)
+
 object FakeData {
+    val homeCard = listOf(
+        HomeCardInfo("Desktop state", "CPU 23% · RAM 41%"),
+        HomeCardInfo("Disco", "C: 120 GB liberi"),
+        HomeCardInfo("Remote control", "Desktop remoto"),
+        HomeCardInfo("Dispositivi collegati", "3 online"),
+        HomeCardInfo("Terminal", "SSH")
+    )
+
     val server = Server(
         nome = "DESKTOP-ABC123",
         indirizzo = "100.111.246.64",

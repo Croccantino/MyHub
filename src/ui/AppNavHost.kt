@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.myhub.app.ui.components.AppScaffold
+import com.myhub.app.ui.screens.HomeScreen
 import com.myhub.app.ui.screens.PlaceholderScreen
 
 private const val ROUTE_HOME = "home"
@@ -28,7 +29,7 @@ fun AppNavHost() {
         }
     ) {
         NavHost(navController = navController, startDestination = ROUTE_HOME) {
-            composable(ROUTE_HOME) { PlaceholderScreen("Home") }
+            composable(ROUTE_HOME) { HomeScreen() }
             composable(ROUTE_DATI) { PlaceholderScreen("Dati") }
             composable(ROUTE_PREFERENZE) { PlaceholderScreen("Preferenze") }
             composable(ROUTE_IMPOSTAZIONI) { PlaceholderScreen("Impostazioni") }
