@@ -27,5 +27,5 @@ settings:
     namespace: com.myhub.app
     minSdk: 26
     targetSdk: 34
-    versionCode: 27
-    versionName: "0.0.27 alfa"
+    versionCode: 28
+    versionName: "0.0.28 alfa"
