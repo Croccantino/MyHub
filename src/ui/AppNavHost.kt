@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.myhub.app.ui.components.AppScaffold
 import com.myhub.app.ui.screens.DatiScreen
 import com.myhub.app.ui.screens.HomeScreen
+import com.myhub.app.ui.screens.ImpostazioniScreen
 import com.myhub.app.ui.screens.PreferenzeScreen
 import com.myhub.app.ui.screens.PlaceholderScreen
 
@@ -34,7 +35,7 @@ fun AppNavHost() {
             composable(ROUTE_HOME) { HomeScreen() }
             composable(ROUTE_DATI) { DatiScreen() }
             composable(ROUTE_PREFERENZE) { PreferenzeScreen() }
-            composable(ROUTE_IMPOSTAZIONI) { PlaceholderScreen("Impostazioni") }
+            composable(ROUTE_IMPOSTAZIONI) { ImpostazioniScreen() }
         }
     }
 }
