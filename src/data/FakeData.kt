@@ -20,6 +20,12 @@ object FakeData {
         online = true
     )
 
+    val desktop = listOf(
+        Server("DESKTOP-ABC123", "100.111.246.64", true),
+        Server("DESKTOP-XYZ789", "100.111.246.65", false),
+        Server("DESKTOP-DEF456", "100.111.246.66", true)
+    )
+
     val accessi = listOf(
         Accesso("192.168.1.20", "18/11/2026", "10:32:11", "SSH", "ok", "Accesso SSH"),
         Accesso("192.168.1.45", "18/11/2026", "09:58:40", "RDP", "fallito", "Login RDP"),
