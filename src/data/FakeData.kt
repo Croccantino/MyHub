@@ -31,4 +31,7 @@ object FakeData {
         Accesso("192.168.1.45", "18/11/2026", "09:58:40", "RDP", "fallito", "Login RDP"),
         Accesso("10.0.0.7", "17/11/2026", "23:14:02", "DB", "ok", "Query database")
     )
+
+    val lettura = List(20) { i -> 20f + (i * 7 % 30) + ((i * 13) % 11).toFloat() }
+    val scrittura = List(20) { i -> 10f + (i * 5 % 20) + ((i * 9) % 7).toFloat() }
 }

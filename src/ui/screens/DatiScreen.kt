@@ -1,310 +1,197 @@
 package com.myhub.app.ui.screens
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.myhub.app.R
-import com.myhub.app.data.model.DiscoInfo
-import com.myhub.app.data.repository.AgenteDatiRepository
-import com.myhub.app.data.repository.DesktopRepository
+import com.myhub.app.data.FakeData
+import com.myhub.app.model.Accesso
+import com.myhub.app.ui.components.dati.ScrollbarVerticale
+import kotlinx.coroutines.delay
 
-/**
- * Schermata "Dati" — disco del PC.
- *
- * Mostra solo le partizioni disco. Nessun legame con Access.
- */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatiScreen(
-    onOpenDrawer: () -> Unit = {},
-    onVaiPreferenze: () -> Unit = {}
-) {
-    val contesto = LocalContext.current
-    val repositoryDesktop = remember { DesktopRepository.getInstance(contesto) }
-    val repositoryDati = remember { AgenteDatiRepository() }
-
-    val viewModel: DatiViewModel = viewModel(
-        factory = remember(repositoryDati, repositoryDesktop) {
-            DatiViewModelFactory(repositoryDati, repositoryDesktop.activeServerFlow)
+fun DatiScreen() {
+    // Uptime finto: si incrementa ogni secondo.
+    var uptimeSecondi by remember { mutableIntStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000)
+            uptimeSecondi++
         }
-    )
-    val stato by viewModel.uiState.collectAsStateWithLifecycle()
+    }
+    val ore = uptimeSecondi / 3600
+    val minuti = (uptimeSecondi % 3600) / 60
+    val secondi = uptimeSecondi % 60
+    val timer = "%02d:%02d:%02d".format(ore, minuti, secondi)
 
-    LifecycleStartEffect(viewModel) {
-        viewModel.onVisibile()
-        onStopOrDispose { viewModel.onNonVisibile() }
+    // Funzione locale (non @Composable): disegna una polilinea con Canvas.
+    fun DrawScope.disegnaPunti(punti: List<Float>, colore: Color) {
+        if (punti.size < 2) return
+        val max = punti.max()
+        val min = punti.min()
+        val range = (max - min).coerceAtLeast(1f)
+        val passoX = size.width / (punti.size - 1)
+        for (i in 0 until punti.size - 1) {
+            val x1 = i * passoX
+            val y1 = size.height - ((punti[i] - min) / range) * size.height
+            val x2 = (i + 1) * passoX
+            val y2 = size.height - ((punti[i + 1] - min) / range) * size.height
+            drawLine(colore, Offset(x1, y1), Offset(x2, y2), strokeWidth = 2.dp.toPx())
+        }
     }
 
+    var accessoSelezionato by remember { mutableStateOf<Accesso?>(null) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val listState = rememberLazyListState()
+
+    // Colori letti qui (contesto @Composable) e passati ai lambda del Canvas.
+    val coloreLettura = MaterialTheme.colorScheme.primary
+    val coloreScrittura = MaterialTheme.colorScheme.tertiary
+
     Column(modifier = Modifier.fillMaxSize()) {
-        // Intestazione semplice con logo e titolo
+        // Intestazione: titolo a sinistra, timer a destra.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            androidx.compose.material3.IconButton(onClick = onOpenDrawer) {
-                androidx.compose.foundation.Image(
-                    painter = androidx.compose.ui.res.painterResource(id = com.myhub.app.R.drawable.logo),
-                    contentDescription = stringResource(R.string.menu),
-                    modifier = Modifier.size(36.dp)
-                )
-            }
             Text(
-                text = stringResource(R.string.dati_titolo),
+                text = "Access",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(1f)
             )
+            Text(
+                text = timer,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            when (stato.fase) {
-                FaseDati.SENZA_SERVER -> MessaggioSenzaServer(
-                    onVaiPreferenze = onVaiPreferenze
-                )
-                FaseDati.CARICAMENTO -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-                FaseDati.ERRORE -> MessaggioErrore(
-                    errore = stato.errore,
-                    onRiprova = viewModel::riprova
-                )
-                FaseDati.PRONTO -> ContenutoDati(
-                    stato = stato,
-                    onRefresh = viewModel::refresh
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MessaggioSenzaServer(onVaiPreferenze: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.dati_nessun_server),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onVaiPreferenze) {
-            Text(stringResource(R.string.dati_vai_preferenze))
-        }
-    }
-}
-
-@Composable
-private fun MessaggioErrore(errore: ErroreDati?, onRiprova: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(messaggioErrore(errore)),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRiprova) {
-            Text(stringResource(R.string.retry))
-        }
-    }
-}
-
-@Composable
-private fun ContenutoDati(
-    stato: DatiUiState,
-    onRefresh: () -> Unit
-) {
-    val listState = rememberLazyListState()
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        PullToRefreshBox(
-            isRefreshing = stato.refreshInCorso,
-            onRefresh = onRefresh,
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 14.dp,
-                    end = 12.dp,
-                    top = 8.dp,
-                    bottom = 24.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                    start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp
+                )
             ) {
-                if (stato.dischi.isEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.dati_disco_non_disponibile),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 16.dp)
-                        )
-                    }
-                } else {
-                    items(stato.dischi) { disco ->
-                        RigaDisco(disco = disco)
+                // Grafico Lettura (Canvas, nessuna libreria).
+                item {
+                    Text("Lettura", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(8.dp))
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) {
+                        disegnaPunti(FakeData.lettura, coloreLettura)
                     }
                 }
 
-                if (stato.errore != null) {
-                    item {
-                        Text(
-                            text = stringResource(messaggioErrore(stato.errore)),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
+                // Grafico Scrittura (Canvas, nessuna libreria).
+                item {
+                    Text("Scrittura", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(8.dp))
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) {
+                        disegnaPunti(FakeData.scrittura, coloreScrittura)
                     }
                 }
-            }
-        }
-    }
-}
 
-@Composable
-private fun RigaDisco(disco: DiscoInfo, modifier: Modifier = Modifier) {
-    val coloreBarra = when {
-        disco.percentuale < 70.0 -> MaterialTheme.colorScheme.primary
-        disco.percentuale < 90.0 -> Color(0xFFF9A825)
-        else -> MaterialTheme.colorScheme.error
-    }
-
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Filled.Album,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                // Sezione Accessi al PC.
+                item {
+                    Text(
+                        "Accessi al PC",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
+                }
+
+                items(FakeData.accessi) { accesso ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { accessoSelezionato = accesso }
+                            .padding(vertical = 10.dp)
+                    ) {
+                        Text(accesso.ip, style = MaterialTheme.typography.bodyLarge)
+                        Spacer(Modifier.width(12.dp))
                         Text(
-                            text = disco.dispositivo,
-                            style = MaterialTheme.typography.titleSmall
+                            accesso.data,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        Spacer(Modifier.width(8.dp))
                         Text(
-                            text = disco.filesystem,
-                            style = MaterialTheme.typography.bodySmall,
+                            accesso.ora,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-                Text(
-                    text = "${disco.percentuale.toInt()}%",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = coloreBarra
-                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            ScrollbarVerticale(
+                listState = listState,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
+    }
 
-            LinearProgressIndicator(
-                progress = { (disco.percentuale / 100.0).toFloat() },
+    // Dettaglio accesso: solo IP, data, ora, canale, esito, azione compiuta.
+    accessoSelezionato?.let { accesso ->
+        ModalBottomSheet(
+            onDismissRequest = { accessoSelezionato = null },
+            sheetState = sheetState
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
-                color = coloreBarra,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "Usato: ${String.format("%.1f", disco.usatoGb)} GB / ${String.format("%.1f", disco.totaleGb)} GB",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "Libero: ${String.format("%.1f", disco.liberoGb)} GB",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            if (disco.liberoGb < disco.totaleGb * 0.1) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.dati_disco_poco_spazio),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
-                )
+                Text("IP: ${accesso.ip}", style = MaterialTheme.typography.bodyLarge)
+                Text("Data: ${accesso.data}", style = MaterialTheme.typography.bodyLarge)
+                Text("Ora: ${accesso.ora}", style = MaterialTheme.typography.bodyLarge)
+                Text("Canale: ${accesso.canale}", style = MaterialTheme.typography.bodyLarge)
+                Text("Esito: ${accesso.esito}", style = MaterialTheme.typography.bodyLarge)
+                Text("Azione: ${accesso.azione}", style = MaterialTheme.typography.bodyLarge)
             }
         }
     }
-}
-
-private fun messaggioErrore(errore: ErroreDati?): Int = when (errore) {
-    ErroreDati.TOKEN -> R.string.dati_errore_token
-    ErroreDati.RETE -> R.string.dati_errore_rete
-    ErroreDati.GENERICO -> R.string.dati_errore_generico
-    null -> R.string.dati_errore_generico
 }
