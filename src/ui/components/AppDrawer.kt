@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.automirrored.filled.ViewList
-import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,13 +49,6 @@ fun AppDrawerContent(
             icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, contentDescription = "Access") },
             selected = currentRoute == Route.Access.path,
             onClick = { onItemClick(Route.Access) },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        NavigationDrawerItem(
-            label = { Text("Dati") },
-            icon = { Icon(Icons.Filled.Album, contentDescription = "Dati") },
-            selected = currentRoute == Route.Dati.path,
-            onClick = { onItemClick(Route.Dati) },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
         NavigationDrawerItem(

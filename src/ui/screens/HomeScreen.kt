@@ -32,7 +32,7 @@ fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Griglia 2x2: Riga 1 (Desktop state, Dati)
+        // Griglia 2x2: Riga 1 (Desktop state, Disk)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -44,7 +44,7 @@ fun HomeScreen(
                 modifier = Modifier.weight(1f)
             )
             CardTile(
-                title = "Dati",
+                title = "Disk",
                 icon = Icons.Filled.Album,
                 onClick = { onNavigate(Route.Dati.path) },
                 modifier = Modifier.weight(1f)

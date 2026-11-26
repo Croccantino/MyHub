@@ -3,6 +3,7 @@ package com.myhub.app.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.myhub.app.data.model.AccessoPc
 import com.myhub.app.data.model.CampioneIo
 import com.myhub.app.data.model.DesktopServer
 import com.myhub.app.data.model.DiscoInfo
@@ -33,6 +34,8 @@ data class DatiUiState(
     val ioNonDisponibile: Boolean = false,
     val dischi: List<DiscoInfo> = emptyList(),
     val discoNonDisponibile: Boolean = false,
+    val accessi: List<AccessoPc> = emptyList(),
+    val accessiNonDisponibili: Boolean = false,
     val refreshInCorso: Boolean = false
 )
 
@@ -121,6 +124,7 @@ class DatiViewModel(
             val stato = runCatching { repository.stato(server) }
             val dischi = runCatching { repository.disco(server) }
             val io = runCatching { repository.io(server, 30) }
+            val accessi = runCatching { repository.accessi(server) }
 
             val errore = when {
                 stato.isFailure -> stato.exceptionOrNull()
@@ -154,6 +158,8 @@ class DatiViewModel(
                     campioniIo = io.getOrDefault(emptyList()),
                     ioNonDisponibile = io.isFailure,
                     discoNonDisponibile = dischi.isFailure,
+                    accessi = accessi.getOrDefault(emptyList()),
+                    accessiNonDisponibili = accessi.isFailure,
                     refreshInCorso = false
                 )
             }
